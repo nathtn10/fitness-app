@@ -118,15 +118,28 @@ The production JS bundle can be verified end-to-end with:
 npx expo export --platform ios
 ```
 
+## Backend
+
+The app is offline-first (everything on-device). The backend design — accounts,
+multi-device sync, social feed, hosted cross-domain AI, crowd-sourced gym
+busyness, and daily-activity ingestion — is specified in **[`BACKEND.md`](./BACKEND.md)**,
+targeting **Supabase**. It ships with two concrete contract artifacts:
+
+- **[`src/api/`](./src/api)** — shared TypeScript DTOs, endpoint payloads, and
+  the `FitnessApiClient` interface the app programs against.
+- **[`supabase/schema.sql`](./supabase/schema.sql)** — the Postgres schema, RLS
+  policies, and triggers.
+
+The per-domain repository is the only seam that changes; the domain and UI
+layers stay untouched.
+
 ## Roadmap
 
-The strength section is live. The next sections are designed to slot into the
-same domain/data/UI structure:
+Shipped: Strength, AI Assistant, Cardio/GPS, Gym, Nutrition, Progress Photos,
+Recovery. Next, per `BACKEND.md`:
 
-- **🏃 Cardio & Outdoor (Strava-style)** — GPS run/ride tracking via
-  `expo-location`: distance, pace, elevation, calories, routes, and PRs.
-- **📍 Gym Integration** — geofenced auto check-in and gym busyness insights.
-- **👟 Daily Activity** — steps & active energy from Apple HealthKit and
-  Google Fit, folded into daily goals.
-- **🤝 Social Sharing** — optional sharing of workouts, routes, and
-  achievements.
+- **☁️ Cloud sync & accounts** — auth + multi-device backup/sync (Phase 0).
+- **🤝 Social** — follows, feed, reactions, granular privacy (Phase 1).
+- **🧠 Hosted cross-domain AI** — LLM coach with on-device fallback (Phase 2).
+- **📊 Crowd gym busyness** — anonymized aggregation (Phase 3).
+- **👟 Daily Activity** — HealthKit / Google Fit via a dev build (Phase 4).
