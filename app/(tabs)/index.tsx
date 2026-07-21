@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
+import { useGym } from '../../src/state/gymStore';
 import { useStore } from '../../src/state/store';
 import {
   Body,
@@ -23,6 +24,8 @@ import {
 export default function DashboardScreen() {
   const router = useRouter();
   const { loading, sessions, profile, activeSession, startWorkout } = useStore();
+  const { gyms, checkIn } = useGym();
+  const currentGym = gyms.find((g) => g.id === checkIn.currentGymId) ?? null;
 
   if (loading) return <Loading />;
 
@@ -78,6 +81,25 @@ export default function DashboardScreen() {
           />
         </Card>
       )}
+
+      <Card>
+        <H2>📍 Gym</H2>
+        {currentGym ? (
+          <Body>You&apos;re at {currentGym.name}.</Body>
+        ) : (
+          <Body muted>
+            {gyms.length > 0
+              ? 'Not at a gym right now.'
+              : 'Set up auto-detect to track gym check-ins and busyness.'}
+          </Body>
+        )}
+        <View style={{ height: spacing.md }} />
+        <Button
+          title={gyms.length > 0 ? 'Open gym' : 'Set up gym'}
+          variant="ghost"
+          onPress={() => router.push('/gym')}
+        />
+      </Card>
 
       {sessions.length > 0 ? (
         <Button

@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { WeightUnit } from '../../src/domain/types';
@@ -5,6 +6,7 @@ import { LIMITS } from '../../src/lib/sanitize';
 import { useStore } from '../../src/state/store';
 import {
   Body,
+  Button,
   Card,
   H1,
   H2,
@@ -21,12 +23,6 @@ const ROADMAP: { icon: string; title: string; detail: string }[] = [
       'Strava-style run/ride tracking: distance, pace, elevation, calories, routes, and personal records. Built on expo-location.',
   },
   {
-    icon: '📍',
-    title: 'Gym Integration',
-    detail:
-      'Auto-detect gym check-ins via geofencing and surface busyness insights from crowd data or gym APIs.',
-  },
-  {
     icon: '👟',
     title: 'Daily Activity',
     detail:
@@ -41,6 +37,7 @@ const ROADMAP: { icon: string; title: string; detail: string }[] = [
 ];
 
 export default function MoreScreen() {
+  const router = useRouter();
   const { loading, profile, updateProfile, sessions } = useStore();
   const [name, setName] = useState(profile.displayName);
 
@@ -86,6 +83,17 @@ export default function MoreScreen() {
             </Pressable>
           ))}
         </View>
+      </Card>
+
+      <Card>
+        <H2>Features</H2>
+        <Body muted>Gym auto-detect, check-in history, and busyness.</Body>
+        <View style={{ height: spacing.md }} />
+        <Button
+          title="📍 Gym"
+          variant="ghost"
+          onPress={() => router.push('/gym')}
+        />
       </Card>
 
       <Card>

@@ -25,8 +25,17 @@ Daily Activity) are architected and stubbed on the **More → Roadmap** screen.
   - *Explain an exercise* — plain-language form cues, muscles worked, and
     common mistakes for any exercise in the catalog.
 
+### 📍 Gym Integration — complete
+- **Auto-detect check-ins** via on-device geofencing (haversine + a
+  dwell-debounced state machine that ignores GPS jitter and drive-bys).
+- **Busyness insights** derived from your visit history (a 7×24 heatmap that
+  merges cleanly with crowd data later), with a typical-by-hour chart.
+- **Visit history** and live "you're at the gym" status.
+- Foreground-only location that never leaves the device (see SECURITY.md).
+
 ### Foundation
-- Expo Router tab navigation (Home · Workout · Progress · AI · More).
+- Expo Router tab navigation (Home · Workout · Progress · AI · More), plus
+  ambient screens (Gym) reached from Home/More.
 - Local persistence via AsyncStorage behind a swappable repository.
 - A pure, fully unit-tested domain layer.
 
