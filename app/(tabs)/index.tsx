@@ -15,7 +15,6 @@ import { formatRelativeDate, formatVolume } from '../../src/ui/format';
 import { spacing } from '../../src/ui/theme';
 import { getExercise } from '../../src/domain/exercises';
 import { sessionsInLastDays } from '../../src/domain/strength/progress';
-import { generateSuggestions } from '../../src/domain/strength/suggestions';
 import {
   sessionVolume,
   sessionWorkingSets,
@@ -31,7 +30,6 @@ export default function DashboardScreen() {
   const thisWeek = sessionsInLastDays(sessions, 7, now);
   const weekVolume = thisWeek.reduce((sum, s) => sum + sessionVolume(s), 0);
   const weekSets = thisWeek.reduce((sum, s) => sum + sessionWorkingSets(s), 0);
-  const topSuggestion = generateSuggestions(sessions, profile, now)[0];
   const recent = sessions.slice(0, 3);
 
   return (
@@ -81,20 +79,15 @@ export default function DashboardScreen() {
         </Card>
       )}
 
-      {topSuggestion ? (
-        <Card>
-          <H2>🧠 Coach tip</H2>
-          <Body>{topSuggestion.title}</Body>
-          <Body muted>{topSuggestion.detail}</Body>
-          <View style={{ height: spacing.md }} />
-          <Button
-            title="See all suggestions"
-            variant="ghost"
-            onPress={() => router.push('/coach')}
-          />
-        </Card>
+      {sessions.length > 0 ? (
+        <Button
+          title="🤖 Ask the AI assistant"
+          variant="ghost"
+          onPress={() => router.push('/ai')}
+        />
       ) : null}
 
+      <View style={{ height: spacing.lg }} />
       <H2>Recent workouts</H2>
       {recent.length === 0 ? (
         <Body muted>No workouts logged yet. Your history will appear here.</Body>

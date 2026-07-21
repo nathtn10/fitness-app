@@ -16,12 +16,17 @@ Daily Activity) are architected and stubbed on the **More → Roadmap** screen.
   **estimated-1RM trend** per exercise.
 - **Personal records**: heaviest weight, best estimated 1RM, and best set
   volume — with a celebration when you set a new PR mid-workout.
-- **AI coach suggestions**: a transparent, rule-based engine that flags
-  undertrained muscle groups, push/pull & upper/lower imbalances, stalled lifts,
-  and recovery needs — every tip explains *why*.
+- **AI Assistant tab** (pull-based, on-device): tips are never shoved in your
+  face — you ask when you want them. Three tools:
+  - *Analyze my training* — transparent, rule-based flags for undertrained
+    muscles, push/pull & upper/lower imbalances, stalled lifts, and recovery,
+    plus a weekly-volume-by-muscle breakdown.
+  - *What should I train today?* — a focus recommendation from recent history.
+  - *Explain an exercise* — plain-language form cues, muscles worked, and
+    common mistakes for any exercise in the catalog.
 
 ### Foundation
-- Expo Router tab navigation (Home · Workout · Progress · Coach · More).
+- Expo Router tab navigation (Home · Workout · Progress · AI · More).
 - Local persistence via AsyncStorage behind a swappable repository.
 - A pure, fully unit-tested domain layer.
 

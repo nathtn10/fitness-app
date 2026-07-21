@@ -42,10 +42,10 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="coach"
+        name="ai"
         options={{
-          title: 'Coach',
-          tabBarIcon: ({ color }) => <TabIcon emoji="🧠" color={color} />,
+          title: 'AI',
+          tabBarIcon: ({ color }) => <TabIcon emoji="🤖" color={color} />,
         }}
       />
       <Tabs.Screen
