@@ -25,6 +25,15 @@ Daily Activity) are architected and stubbed on the **More → Roadmap** screen.
   - *Explain an exercise* — plain-language form cues, muscles worked, and
     common mistakes for any exercise in the catalog.
 
+### 🥗 Nutrition — complete
+- **Meal logging** with a built-in food database and macro/calorie tracking
+  against daily goals.
+- **Natural-language editing** (on-device, no LLM): "swap the rice for
+  cauliflower rice, double the chicken, add 2 eggs" is parsed and applied
+  instantly, recalculating everything. Also supports add/remove/set/scale and
+  direct per-ingredient gram edits.
+- Daily totals with protein/carb/fat progress bars and remaining calories.
+
 ### 🏃 Cardio & Outdoor (GPS) — complete
 - **Live GPS tracking** for runs, rides, walks, and hikes with pause/resume.
 - **Metrics**: distance, moving time, pace, average speed, elevation gain (with

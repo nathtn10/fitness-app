@@ -81,11 +81,18 @@ export default function MoreScreen() {
 
       <Card>
         <H2>Features</H2>
-        <Body muted>Outdoor GPS activities, gym auto-detect and busyness.</Body>
+        <Body muted>
+          Outdoor GPS activities, nutrition logging, gym auto-detect.
+        </Body>
         <View style={{ height: spacing.md }} />
         <Button
           title="🏃 Activities"
           onPress={() => router.push('/cardio')}
+        />
+        <View style={{ height: spacing.sm }} />
+        <Button
+          title="🥗 Nutrition"
+          onPress={() => router.push('/nutrition')}
         />
         <View style={{ height: spacing.sm }} />
         <Button

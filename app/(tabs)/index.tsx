@@ -1,7 +1,10 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
+import { toISODate } from '../../src/domain/dates';
+import { dailyTotals } from '../../src/domain/nutrition/goals';
 import { useCardio } from '../../src/state/cardioStore';
 import { useGym } from '../../src/state/gymStore';
+import { useNutrition } from '../../src/state/nutritionStore';
 import { useStore } from '../../src/state/store';
 import {
   Body,
@@ -27,7 +30,9 @@ export default function DashboardScreen() {
   const { loading, sessions, profile, activeSession, startWorkout } = useStore();
   const { gyms, checkIn } = useGym();
   const { recording } = useCardio();
+  const { meals, goals } = useNutrition();
   const currentGym = gyms.find((g) => g.id === checkIn.currentGymId) ?? null;
+  const todayCalories = dailyTotals(meals, toISODate(new Date())).calories;
 
   if (loading) return <Loading />;
 
@@ -83,6 +88,19 @@ export default function DashboardScreen() {
           />
         </Card>
       )}
+
+      <Card>
+        <H2>🥗 Nutrition</H2>
+        <Body muted>
+          {todayCalories} / {goals.calories} kcal today
+        </Body>
+        <View style={{ height: spacing.md }} />
+        <Button
+          title="Log a meal"
+          variant="ghost"
+          onPress={() => router.push('/nutrition')}
+        />
+      </Card>
 
       <Card>
         <H2>🏃 Outdoor activity</H2>
