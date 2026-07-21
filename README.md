@@ -25,6 +25,13 @@ Daily Activity) are architected and stubbed on the **More → Roadmap** screen.
   - *Explain an exercise* — plain-language form cues, muscles worked, and
     common mistakes for any exercise in the catalog.
 
+### 📸 Progress Photos — complete
+- Capture or import photos, stored **private and on-device only**. Metadata
+  (including GPS) is stripped on import by re-encoding.
+- **Side-by-side comparison** with *measured* deltas — days elapsed, bodyweight
+  change, and estimated-1RM movement on lifts trained in the span. No black-box
+  pixel analysis; the "what changed" is real data.
+
 ### 🥗 Nutrition — complete
 - **Meal logging** with a built-in food database and macro/calorie tracking
   against daily goals.

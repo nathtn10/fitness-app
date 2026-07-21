@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { CardioProvider } from '../src/state/cardioStore';
 import { GymProvider } from '../src/state/gymStore';
 import { NutritionProvider } from '../src/state/nutritionStore';
+import { PhotosProvider } from '../src/state/photosStore';
 import { StoreProvider } from '../src/state/store';
 import { colors } from '../src/ui/theme';
 
@@ -14,6 +15,7 @@ export default function RootLayout() {
         <GymProvider>
           <CardioProvider>
             <NutritionProvider>
+             <PhotosProvider>
               <StatusBar style="light" />
               <Stack
                 screenOptions={{
@@ -42,7 +44,13 @@ export default function RootLayout() {
                   name="meal-editor"
                   options={{ title: 'Meal' }}
                 />
+                <Stack.Screen name="photos" options={{ title: 'Progress Photos' }} />
+                <Stack.Screen
+                  name="photo-compare"
+                  options={{ title: 'Compare' }}
+                />
               </Stack>
+             </PhotosProvider>
             </NutritionProvider>
           </CardioProvider>
         </GymProvider>

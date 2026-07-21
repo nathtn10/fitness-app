@@ -15,7 +15,9 @@
         "NSLocationAlwaysAndWhenInUseUsageDescription": "We use your location to track outdoor activities and detect when you're at the gym.",
         "NSMotionUsageDescription": "We use motion data to estimate steps and activity.",
         "NSHealthShareUsageDescription": "We read step and workout data to integrate with your daily fitness goals.",
-        "NSHealthUpdateUsageDescription": "We write completed workouts to Apple Health."
+        "NSHealthUpdateUsageDescription": "We write completed workouts to Apple Health.",
+        "NSCameraUsageDescription": "We use the camera so you can take progress photos.",
+        "NSPhotoLibraryUsageDescription": "We access your photo library so you can add progress photos."
       }
     },
     "android": {

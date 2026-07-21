@@ -96,6 +96,11 @@ export default function MoreScreen() {
         />
         <View style={{ height: spacing.sm }} />
         <Button
+          title="📸 Progress photos"
+          onPress={() => router.push('/photos')}
+        />
+        <View style={{ height: spacing.sm }} />
+        <Button
           title="📍 Gym"
           variant="ghost"
           onPress={() => router.push('/gym')}
