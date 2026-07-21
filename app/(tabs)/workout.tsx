@@ -1,8 +1,6 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { getExercise } from '../../src/domain/exercises';
-import type { SetEntry } from '../../src/domain/types';
 import { useStore } from '../../src/state/store';
 import {
   Body,
@@ -13,8 +11,9 @@ import {
   Loading,
   Screen,
 } from '../../src/ui/components';
-import { colors, font, radius, spacing } from '../../src/ui/theme';
 import { RestTimer } from '../../src/ui/RestTimer';
+import { SetRow } from '../../src/ui/SetRow';
+import { colors, font, spacing } from '../../src/ui/theme';
 
 export default function WorkoutScreen() {
   const router = useRouter();
@@ -140,69 +139,6 @@ export default function WorkoutScreen() {
   );
 }
 
-function SetRow({
-  index,
-  set,
-  onChange,
-  onDelete,
-}: {
-  index: number;
-  set: SetEntry;
-  onChange: (patch: Partial<SetEntry>) => void;
-  onDelete: () => void;
-}) {
-  const [weight, setWeight] = useState(set.weight ? String(set.weight) : '');
-  const [reps, setReps] = useState(set.reps ? String(set.reps) : '');
-
-  return (
-    <View style={[styles.setRow, set.isWarmup && styles.warmupRow]}>
-      <Text style={[styles.setCol, styles.colIdx, styles.setText]}>
-        {set.isWarmup ? 'W' : index}
-      </Text>
-      <TextInput
-        style={[styles.setCol, styles.colInput, styles.input]}
-        keyboardType="numeric"
-        value={weight}
-        placeholder="0"
-        placeholderTextColor={colors.textMuted}
-        onChangeText={(t) => {
-          setWeight(t);
-          const n = parseFloat(t);
-          onChange({ weight: Number.isFinite(n) ? n : 0 });
-        }}
-      />
-      <TextInput
-        style={[styles.setCol, styles.colInput, styles.input]}
-        keyboardType="numeric"
-        value={reps}
-        placeholder="0"
-        placeholderTextColor={colors.textMuted}
-        onChangeText={(t) => {
-          setReps(t);
-          const n = parseInt(t, 10);
-          onChange({ reps: Number.isFinite(n) ? n : 0 });
-        }}
-      />
-      <Pressable
-        style={[styles.setCol, styles.colDone]}
-        onPress={() => onChange({ completed: !set.completed })}
-      >
-        <Text
-          style={[
-            styles.check,
-            { color: set.completed ? colors.success : colors.textMuted },
-          ]}
-        >
-          {set.completed ? '✓' : '○'}
-        </Text>
-      </Pressable>
-      <Pressable style={[styles.setCol, styles.colDel]} onPress={onDelete}>
-        <Text style={styles.remove}>✕</Text>
-      </Pressable>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   exerciseHeader: {
     flexDirection: 'row',
@@ -216,26 +152,9 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     marginBottom: spacing.xs,
   },
-  setRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.xs,
-  },
-  warmupRow: { opacity: 0.8 },
   setCol: {},
   colIdx: { width: 28, textAlign: 'center', color: colors.text },
   colInput: { flex: 1, marginHorizontal: spacing.xs },
   colDone: { width: 40, alignItems: 'center' },
   colDel: { width: 28, alignItems: 'center' },
-  setText: { color: colors.textMuted, fontSize: font.small },
-  input: {
-    backgroundColor: colors.surfaceAlt,
-    borderRadius: radius.sm,
-    color: colors.text,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm,
-    textAlign: 'center',
-    fontSize: font.body,
-  },
-  check: { fontSize: 20, fontWeight: '800' },
 });

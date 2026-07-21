@@ -9,7 +9,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/src/domain'],
+  roots: ['<rootDir>/src/domain', '<rootDir>/src/lib'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },

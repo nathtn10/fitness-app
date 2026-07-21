@@ -28,6 +28,7 @@ import type {
   WorkoutSession,
 } from '../domain/types';
 import { createId } from '../lib/id';
+import { LIMITS, sanitizeText } from '../lib/sanitize';
 
 interface StoreValue {
   loading: boolean;
@@ -86,10 +87,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const startWorkout = useCallback(
     (name?: string) => {
+      const cleanName = name ? sanitizeText(name, LIMITS.workoutName) : '';
       setActiveSession({
         id: createId('session'),
         startedAt: new Date().toISOString(),
-        name: name?.trim() || 'Workout',
+        name: cleanName || 'Workout',
         unit: profile.unit,
         exercises: [],
       });
@@ -195,8 +197,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   );
 
   const updateProfile = useCallback((patch: Partial<UserProfile>) => {
+    const cleanPatch = {
+      ...patch,
+      ...(patch.displayName != null && {
+        displayName: sanitizeText(patch.displayName, LIMITS.displayName),
+      }),
+    };
     setProfile((prev) => {
-      const next = { ...prev, ...patch };
+      const next = { ...prev, ...cleanPatch };
       void saveProfile(next);
       return next;
     });

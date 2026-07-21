@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { WeightUnit } from '../../src/domain/types';
+import { LIMITS } from '../../src/lib/sanitize';
 import { useStore } from '../../src/state/store';
 import {
   Body,
@@ -61,6 +62,7 @@ export default function MoreScreen() {
           onBlur={() => updateProfile({ displayName: name.trim() || 'Athlete' })}
           placeholder="Your name"
           placeholderTextColor={colors.textMuted}
+          maxLength={LIMITS.displayName}
         />
 
         <Text style={[styles.fieldLabel, { marginTop: spacing.md }]}>
