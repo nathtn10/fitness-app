@@ -24,6 +24,9 @@ Daily Activity) are architected and stubbed on the **More → Roadmap** screen.
   - *What should I train today?* — a focus recommendation from recent history.
   - *Explain an exercise* — plain-language form cues, muscles worked, and
     common mistakes for any exercise in the catalog.
+  - *Recovery & readiness* — a 0–100 readiness score from your training load
+    (acute:chronic workload, monotony, rest days). Cross-domain (strength +
+    cardio), no wearable required, every factor explained.
 
 ### 📸 Progress Photos — complete
 - Capture or import photos, stored **private and on-device only**. Metadata

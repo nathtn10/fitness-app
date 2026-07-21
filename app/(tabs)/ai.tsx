@@ -25,12 +25,17 @@ import {
   generateSuggestions,
   type Suggestion,
 } from '../../src/domain/strength/suggestions';
+import {
+  computeReadiness,
+  readinessHeadline,
+} from '../../src/domain/recovery/score';
+import { useCardio } from '../../src/state/cardioStore';
 import { useStore } from '../../src/state/store';
 import { Body, Card, H1, H2, Loading, Screen } from '../../src/ui/components';
 import { MuscleVolumeBars } from '../../src/ui/MuscleVolumeBars';
 import { colors, font, radius, spacing } from '../../src/ui/theme';
 
-type Panel = 'analyze' | 'today' | 'explain' | null;
+type Panel = 'analyze' | 'today' | 'recovery' | 'explain' | null;
 
 const TYPE_ICON: Record<Suggestion['type'], string> = {
   undertrained: '🎯',
@@ -42,9 +47,14 @@ const TYPE_ICON: Record<Suggestion['type'], string> = {
 
 export default function AIScreen() {
   const { loading, sessions, profile } = useStore();
+  const { activities } = useCardio();
   const [panel, setPanel] = useState<Panel>(null);
 
   const now = new Date();
+  const readiness = useMemo(
+    () => computeReadiness(sessions, activities, now),
+    [sessions, activities],
+  );
   const suggestions = useMemo(
     () => generateSuggestions(sessions, profile, now),
     [sessions, profile],
@@ -81,6 +91,12 @@ export default function AIScreen() {
           label="What should I train today?"
           active={panel === 'today'}
           onPress={() => setPanel(panel === 'today' ? null : 'today')}
+        />
+        <ActionButton
+          emoji="🔋"
+          label="Recovery & readiness"
+          active={panel === 'recovery'}
+          onPress={() => setPanel(panel === 'recovery' ? null : 'recovery')}
         />
         <ActionButton
           emoji="📖"
@@ -126,6 +142,43 @@ export default function AIScreen() {
               Let recover: {focus.rest.map(muscleGroupLabel).join(', ')}
             </Text>
           )}
+        </Card>
+      )}
+      {panel === 'recovery' && (
+        <Card>
+          <View style={styles.readinessHeader}>
+            <Text style={styles.readinessScore}>{readiness.score}</Text>
+            <View style={{ flex: 1 }}>
+              <H2>{readinessHeadline(readiness.level)}</H2>
+              <Body muted>
+                Readiness from your training load — no wearable required.
+              </Body>
+            </View>
+          </View>
+          <View style={{ height: spacing.sm }} />
+          {readiness.factors.map((f, i) => (
+            <View key={i} style={styles.factorRow}>
+              <Text
+                style={[
+                  styles.factorDot,
+                  {
+                    color:
+                      f.impact === 'positive'
+                        ? colors.success
+                        : f.impact === 'negative'
+                          ? colors.danger
+                          : colors.textMuted,
+                  },
+                ]}
+              >
+                ●
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.factorLabel}>{f.label}</Text>
+                <Body muted>{f.detail}</Body>
+              </View>
+            </View>
+          ))}
         </Card>
       )}
       {panel === 'explain' && <ExplainPanel />}
@@ -267,6 +320,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   tag: { color: colors.primary, fontSize: font.small, fontWeight: '600', marginTop: 2 },
+  readinessHeader: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  readinessScore: { color: colors.text, fontSize: 48, fontWeight: '800' },
+  factorRow: { flexDirection: 'row', marginTop: spacing.sm, gap: spacing.sm },
+  factorDot: { fontSize: font.body },
+  factorLabel: { color: colors.text, fontSize: font.body, fontWeight: '600' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   chip: {
     paddingVertical: spacing.xs,
