@@ -38,6 +38,7 @@ export interface AuthSession {
 
 export interface FitnessApiClient {
   // --- Auth ---
+  signUpWithEmail(email: string, password: string): Promise<ApiResult<AuthSession>>;
   signInWithEmail(email: string, password: string): Promise<ApiResult<AuthSession>>;
   signInWithOAuth(provider: 'apple' | 'google'): Promise<ApiResult<AuthSession>>;
   signOut(): Promise<void>;

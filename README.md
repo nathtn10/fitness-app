@@ -138,7 +138,10 @@ layers stay untouched.
 Shipped: Strength, AI Assistant, Cardio/GPS, Gym, Nutrition, Progress Photos,
 Recovery. Next, per `BACKEND.md`:
 
-- **☁️ Cloud sync & accounts** — auth + multi-device backup/sync (Phase 0).
+- **☁️ Cloud sync & accounts** — auth + multi-device backup/sync (Phase 0) —
+  **implemented behind an env flag** (`EXPO_PUBLIC_SUPABASE_*`); off by default,
+  so the app is unchanged until a Supabase project is configured. See
+  `.env.example`.
 - **🤝 Social** — follows, feed, reactions, granular privacy (Phase 1).
 - **🧠 Hosted cross-domain AI** — LLM coach with on-device fallback (Phase 2).
 - **📊 Crowd gym busyness** — anonymized aggregation (Phase 3).

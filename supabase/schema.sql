@@ -16,7 +16,10 @@ create extension if not exists "pgcrypto";   -- gen_random_uuid()
 -- Shared helpers
 -- ---------------------------------------------------------------------------
 
--- Bump updated_at on every write so the sync cursor (updatedAt) is authoritative.
+-- Bump updated_at on every write. Used ONLY for server-owned tables (profiles).
+-- Synced data tables are offline-first and CLIENT-authoritative: the client
+-- supplies updated_at so last-write-wins works across devices, so those tables
+-- deliberately do NOT use this trigger.
 create or replace function set_updated_at() returns trigger as $$
 begin
   new.updated_at := now();
@@ -111,8 +114,6 @@ create policy ws_shared_read on workout_sessions for select to authenticated usi
     or (visibility = 'followers' and is_follower(user_id))
   )
 );
-create trigger ws_touch before update on workout_sessions
-  for each row execute function set_updated_at();
 
 create table activities (
   id uuid primary key,
@@ -140,8 +141,6 @@ create policy act_shared_read on activities for select to authenticated using (
     or (visibility = 'followers' and is_follower(user_id))
   )
 );
-create trigger act_touch before update on activities
-  for each row execute function set_updated_at();
 
 create table meals (
   id uuid primary key,
@@ -170,8 +169,6 @@ create policy meals_shared_read on meals for select to authenticated using (
     or (visibility = 'followers' and is_follower(user_id))
   )
 );
-create trigger meals_touch before update on meals
-  for each row execute function set_updated_at();
 
 -- ---------------------------------------------------------------------------
 -- Private-only data (never shared through visibility; owner-only RLS)
@@ -191,8 +188,6 @@ create table progress_photos (
 alter table progress_photos enable row level security;
 create policy photos_owner on progress_photos for all to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
-create trigger photos_touch before update on progress_photos
-  for each row execute function set_updated_at();
 
 create table gyms (
   id uuid primary key,
@@ -209,8 +204,6 @@ create table gyms (
 alter table gyms enable row level security;
 create policy gyms_owner on gyms for all to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
-create trigger gyms_touch before update on gyms
-  for each row execute function set_updated_at();
 
 create table gym_visits (
   id uuid primary key,
@@ -227,8 +220,6 @@ alter table gym_visits enable row level security;
 create index on gym_visits (user_id, updated_at);
 create policy visits_owner on gym_visits for all to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
-create trigger visits_touch before update on gym_visits
-  for each row execute function set_updated_at();
 
 create table daily_activity (
   id uuid primary key,
@@ -247,8 +238,6 @@ alter table daily_activity enable row level security;
 create index on daily_activity (user_id, updated_at);
 create policy steps_owner on daily_activity for all to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
-create trigger steps_touch before update on daily_activity
-  for each row execute function set_updated_at();
 
 -- ---------------------------------------------------------------------------
 -- Gym busyness (anonymized, crowd-aggregated)

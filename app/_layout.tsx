@@ -1,16 +1,20 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider } from '../src/state/authStore';
 import { CardioProvider } from '../src/state/cardioStore';
 import { GymProvider } from '../src/state/gymStore';
 import { NutritionProvider } from '../src/state/nutritionStore';
 import { PhotosProvider } from '../src/state/photosStore';
 import { StoreProvider } from '../src/state/store';
+import { SyncProvider } from '../src/state/syncStore';
 import { colors } from '../src/ui/theme';
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
+     <AuthProvider>
+      <SyncProvider>
       <StoreProvider>
         <GymProvider>
           <CardioProvider>
@@ -49,12 +53,15 @@ export default function RootLayout() {
                   name="photo-compare"
                   options={{ title: 'Compare' }}
                 />
+                <Stack.Screen name="account" options={{ title: 'Account' }} />
               </Stack>
              </PhotosProvider>
             </NutritionProvider>
           </CardioProvider>
         </GymProvider>
       </StoreProvider>
+      </SyncProvider>
+     </AuthProvider>
     </SafeAreaProvider>
   );
 }

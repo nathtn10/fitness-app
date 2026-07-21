@@ -44,6 +44,16 @@ export default function MoreScreen() {
       <H1>More</H1>
 
       <Card>
+        <H2>Account & sync</H2>
+        <Body muted>
+          Back up your data and sync across devices (optional; the app works
+          fully offline).
+        </Body>
+        <View style={{ height: spacing.md }} />
+        <Button title="☁️ Account" onPress={() => router.push('/account')} />
+      </Card>
+
+      <Card>
         <H2>Profile</H2>
         <Text style={styles.fieldLabel}>Display name</Text>
         <TextInput

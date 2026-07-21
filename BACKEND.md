@@ -320,13 +320,42 @@ UI → store → repository → AsyncStorage (read/write, unchanged)
 
 | Phase | Scope | Notable pieces |
 |------|-------|----------------|
-| **0** | Auth + profiles + **cloud sync/backup** of existing domains (single user, multi-device). No social. | Auth, `profiles`, sync engine, UUID id migration |
+| **0** ✅ | Auth + profiles + **cloud sync/backup** of existing domains (single user, multi-device). No social. | Auth, `profiles`, sync engine, UUID id migration — **implemented** behind the env flag (see below) |
 | **1** | **Social**: follows, feed, reactions, comments, privacy controls. | `follows`, `feed_posts`, `getFeed`, Realtime |
 | **2** | **Hosted AI coach** (cross-domain) with on-device fallback. | `coach` Edge Function + Claude |
 | **3** | **Gym busyness** crowd aggregation. | geohash `place_id`, scheduled job, k-anonymity |
 | **4** | **Daily activity** ingestion (HealthKit / Google Fit) via a dev build. | native health module, `daily_activity` |
 
 Each phase is independently shippable and leaves the app fully working offline.
+
+### Phase 0 — implementation notes
+
+**Implemented in this repo (behind `EXPO_PUBLIC_SUPABASE_*`, off by default):**
+
+- Pure, unit-tested **sync engine** (`src/sync/engine.ts`): content-hash change
+  detection, dirty tracking, LWW merge, tombstones — 14 tests.
+- **Table serializers** (`src/sync/tables.ts`) for the five domains with local
+  repositories (workouts, activities, meals, gyms, gym-visits).
+- **Supabase adapter** (`src/api/supabaseClient.ts`) implementing the
+  `FitnessApiClient` contract: email auth, profile/privacy, push/pull, photo
+  storage. Social/AI/busyness return a clear "not available yet".
+- **Auth + sync stores** (`src/state/authStore.tsx`, `syncStore.tsx`) and an
+  **Account screen** (sign in/up, "Sync now", sign out). UUID record ids.
+- The app is byte-for-byte unchanged when the env vars are absent.
+
+**Remaining to finish Phase 0 against a live project (needs a real Supabase
+instance to validate — not possible in this sandbox):**
+
+1. Provision the project; run `supabase/schema.sql`; create the private
+   `progress-photos` bucket + storage policy.
+2. **Live re-hydration**: `syncNow()` writes to AsyncStorage; wire the domain
+   stores to reload after a pull (today they refresh on next launch).
+3. **Photos + daily-activity sync** (upload orchestration / Phase 4 source).
+4. **OAuth** (Apple/Google) via the `expo-web-browser` redirect flow.
+5. **Harden LWW at the DB**: replace the adapter's plain upsert with a
+   conditional-upsert RPC (`... where excluded.updated_at > table.updated_at`)
+   so a stale device can't overwrite newer server rows.
+6. **UUID migration** for any records created before this change.
 
 ---
 
