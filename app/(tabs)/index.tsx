@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
+import { useCardio } from '../../src/state/cardioStore';
 import { useGym } from '../../src/state/gymStore';
 import { useStore } from '../../src/state/store';
 import {
@@ -25,6 +26,7 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { loading, sessions, profile, activeSession, startWorkout } = useStore();
   const { gyms, checkIn } = useGym();
+  const { recording } = useCardio();
   const currentGym = gyms.find((g) => g.id === checkIn.currentGymId) ?? null;
 
   if (loading) return <Loading />;
@@ -81,6 +83,20 @@ export default function DashboardScreen() {
           />
         </Card>
       )}
+
+      <Card>
+        <H2>🏃 Outdoor activity</H2>
+        {recording ? (
+          <Body>Recording in progress — tap to resume.</Body>
+        ) : (
+          <Body muted>Track a run, ride, walk, or hike with GPS.</Body>
+        )}
+        <View style={{ height: spacing.md }} />
+        <Button
+          title={recording ? 'Resume recording' : 'Start an activity'}
+          onPress={() => router.push(recording ? '/record' : '/cardio')}
+        />
+      </Card>
 
       <Card>
         <H2>📍 Gym</H2>

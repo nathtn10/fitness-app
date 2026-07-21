@@ -10,6 +10,7 @@
  * never streams coordinates off the device. Detection runs locally.
  */
 import * as Location from 'expo-location';
+import type { TrackPoint } from '../domain/cardio/types';
 import type { GeoCoordinate } from '../domain/gym/types';
 
 export async function requestForegroundPermission(): Promise<boolean> {
@@ -67,6 +68,37 @@ export async function watchCoordinate(
         onChange({
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
+        });
+      },
+    );
+    return { remove: () => sub.remove() };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Watch high-accuracy location for recording a cardio activity, emitting full
+ * track points (altitude, timestamp, speed). Uses tighter sampling than the
+ * gym watcher since we're drawing a route, not just detecting a geofence.
+ */
+export async function watchTrackPoints(
+  onPoint: (point: TrackPoint) => void,
+): Promise<LocationSubscription | null> {
+  try {
+    const sub = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: 2_000,
+        distanceInterval: 5,
+      },
+      (pos) => {
+        onPoint({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          altitude: pos.coords.altitude ?? undefined,
+          speed: pos.coords.speed ?? undefined,
+          timestamp: new Date(pos.timestamp).toISOString(),
         });
       },
     );

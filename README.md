@@ -25,6 +25,15 @@ Daily Activity) are architected and stubbed on the **More → Roadmap** screen.
   - *Explain an exercise* — plain-language form cues, muscles worked, and
     common mistakes for any exercise in the catalog.
 
+### 🏃 Cardio & Outdoor (GPS) — complete
+- **Live GPS tracking** for runs, rides, walks, and hikes with pause/resume.
+- **Metrics**: distance, moving time, pace, average speed, elevation gain (with
+  noise filtering), and MET-based calorie estimates.
+- **Per-kilometer splits** and a self-contained **route sketch** (SVG polyline —
+  no map API key, no network).
+- **Personal records per activity type** (longest distance/duration, most
+  elevation, fastest pace) and **milestone achievements**, celebrated on finish.
+
 ### 📍 Gym Integration — complete
 - **Auto-detect check-ins** via on-device geofencing (haversine + a
   dwell-debounced state machine that ignores GPS jitter and drive-bys).

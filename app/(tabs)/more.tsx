@@ -17,12 +17,6 @@ import { colors, font, radius, spacing } from '../../src/ui/theme';
 
 const ROADMAP: { icon: string; title: string; detail: string }[] = [
   {
-    icon: '🏃',
-    title: 'Cardio & Outdoor (GPS)',
-    detail:
-      'Strava-style run/ride tracking: distance, pace, elevation, calories, routes, and personal records. Built on expo-location.',
-  },
-  {
     icon: '👟',
     title: 'Daily Activity',
     detail:
@@ -87,8 +81,13 @@ export default function MoreScreen() {
 
       <Card>
         <H2>Features</H2>
-        <Body muted>Gym auto-detect, check-in history, and busyness.</Body>
+        <Body muted>Outdoor GPS activities, gym auto-detect and busyness.</Body>
         <View style={{ height: spacing.md }} />
+        <Button
+          title="🏃 Activities"
+          onPress={() => router.push('/cardio')}
+        />
+        <View style={{ height: spacing.sm }} />
         <Button
           title="📍 Gym"
           variant="ghost"
