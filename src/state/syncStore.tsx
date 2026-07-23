@@ -17,10 +17,14 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
+import { AppState } from 'react-native';
 import { getApiClient } from '../api/supabaseClient';
+import { emitSyncApplied } from '../lib/events';
 import type { ChangeSet } from '../api';
 import { loadActivities, saveActivities } from '../data/cardioRepository';
 import { loadGymVisits, loadGyms, saveGymVisits, saveGyms } from '../data/gymRepository';
@@ -148,6 +152,8 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
         index,
         deviceId: state.deviceId,
       });
+      // Tell the domain stores to re-read storage so pulled data shows now.
+      emitSyncApplied();
       setLastSyncedAt(now);
       setStatus('idle');
     } catch (e) {
@@ -155,6 +161,31 @@ export function SyncProvider({ children }: { children: React.ReactNode }) {
       setStatus('error');
     }
   }, [enabled, session]);
+
+  // Auto-sync: once on sign-in, and each time the app returns to foreground.
+  // Throttled so a quick tab-away/back doesn't hammer the backend. syncNow is
+  // itself a no-op when signed out, so the AppState listener is always safe.
+  const syncRef = useRef(syncNow);
+  syncRef.current = syncNow;
+  const lastAutoRef = useRef(0);
+
+  const autoSync = useCallback(() => {
+    const nowMs = Date.now();
+    if (nowMs - lastAutoRef.current < 60_000) return;
+    lastAutoRef.current = nowMs;
+    void syncRef.current();
+  }, []);
+
+  useEffect(() => {
+    if (enabled && session) autoSync();
+  }, [enabled, session, autoSync]);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active') autoSync();
+    });
+    return () => sub.remove();
+  }, [autoSync]);
 
   const value = useMemo<SyncStoreValue>(
     () => ({ status, lastSyncedAt, lastError, syncNow }),

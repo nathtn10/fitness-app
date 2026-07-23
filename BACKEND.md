@@ -348,8 +348,10 @@ instance to validate — not possible in this sandbox):**
 
 1. Provision the project; run `supabase/schema.sql`; create the private
    `progress-photos` bucket + storage policy.
-2. **Live re-hydration**: `syncNow()` writes to AsyncStorage; wire the domain
-   stores to reload after a pull (today they refresh on next launch).
+2. ~~**Live re-hydration**: wire the domain stores to reload after a pull.~~
+   **Done** — a `syncApplied` event bus (`src/lib/events.ts`) makes every store
+   re-read storage the moment a pull lands; auto-sync runs on sign-in and app
+   foreground (throttled). Pulled data now appears without a relaunch.
 3. **Photos + daily-activity sync** (upload orchestration / Phase 4 source).
 4. **OAuth** (Apple/Google) via the `expo-web-browser` redirect flow.
 5. **Harden LWW at the DB**: replace the adapter's plain upsert with a

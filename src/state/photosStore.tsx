@@ -13,6 +13,7 @@ import React, {
 } from 'react';
 import { loadPhotos, savePhotos } from '../data/photosRepository';
 import type { ProgressPhoto } from '../domain/photos/types';
+import { onSyncApplied } from '../lib/events';
 import { createId } from '../lib/id';
 import {
   capturePhoto,
@@ -26,6 +27,8 @@ interface PhotosStoreValue {
   addFromLibrary: (bodyweightKg?: number) => Promise<boolean>;
   addFromCamera: (bodyweightKg?: number) => Promise<boolean>;
   deletePhoto: (id: string) => void;
+  /** Re-read photos from storage (e.g. after a sync pull). */
+  reload: () => Promise<void>;
 }
 
 const PhotosContext = createContext<PhotosStoreValue | null>(null);
@@ -34,18 +37,18 @@ export function PhotosProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [photos, setPhotos] = useState<ProgressPhoto[]>([]);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const loaded = await loadPhotos();
-      if (cancelled) return;
-      setPhotos(loaded);
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
+  const reload = useCallback(async () => {
+    const loaded = await loadPhotos();
+    setPhotos(loaded);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    void reload();
+  }, [reload]);
+
+  // Re-read after a sync pull writes new data to storage.
+  useEffect(() => onSyncApplied(() => void reload()), [reload]);
 
   const persist = useCallback((next: ProgressPhoto[]) => {
     setPhotos(next);
@@ -99,8 +102,8 @@ export function PhotosProvider({ children }: { children: React.ReactNode }) {
   );
 
   const value = useMemo<PhotosStoreValue>(
-    () => ({ loading, photos, addFromLibrary, addFromCamera, deletePhoto }),
-    [loading, photos, addFromLibrary, addFromCamera, deletePhoto],
+    () => ({ loading, photos, addFromLibrary, addFromCamera, deletePhoto, reload }),
+    [loading, photos, addFromLibrary, addFromCamera, deletePhoto, reload],
   );
 
   return (

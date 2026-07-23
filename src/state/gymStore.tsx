@@ -36,6 +36,7 @@ import type {
   GymCheckInState,
   GymVisit,
 } from '../domain/gym/types';
+import { onSyncApplied } from '../lib/events';
 import { createId } from '../lib/id';
 import { LIMITS, sanitizeText } from '../lib/sanitize';
 import {
@@ -57,6 +58,8 @@ interface GymStoreValue {
   setDetectionEnabled: (enabled: boolean) => Promise<boolean>;
   /** Take a one-off location reading and update check-in status. */
   refreshNow: () => Promise<void>;
+  /** Re-read gyms & visits from storage (e.g. after a sync pull). */
+  reload: () => Promise<void>;
 }
 
 const GymContext = createContext<GymStoreValue | null>(null);
@@ -98,6 +101,16 @@ export function GymProvider({ children }: { children: React.ReactNode }) {
       cancelled = true;
     };
   }, []);
+
+  const reload = useCallback(async () => {
+    const [g, v] = await Promise.all([loadGyms(), loadGymVisits()]);
+    setGymsState(g);
+    gymsRef.current = g;
+    setVisitsState(v);
+  }, []);
+
+  // Re-read after a sync pull writes new data to storage.
+  useEffect(() => onSyncApplied(() => void reload()), [reload]);
 
   const setGyms = useCallback((next: Gym[]) => {
     setGymsState(next);
@@ -241,6 +254,7 @@ export function GymProvider({ children }: { children: React.ReactNode }) {
       removeGym,
       setDetectionEnabled,
       refreshNow,
+      reload,
     }),
     [
       loading,
@@ -252,6 +266,7 @@ export function GymProvider({ children }: { children: React.ReactNode }) {
       removeGym,
       setDetectionEnabled,
       refreshNow,
+      reload,
     ],
   );
 

@@ -28,6 +28,7 @@ import type {
   WorkoutSession,
 } from '../domain/types';
 import { createId } from '../lib/id';
+import { onSyncApplied } from '../lib/events';
 import { LIMITS, sanitizeText } from '../lib/sanitize';
 
 interface StoreValue {
@@ -47,6 +48,8 @@ interface StoreValue {
   removeSet: (logId: string, setId: string) => void;
 
   updateProfile: (patch: Partial<UserProfile>) => void;
+  /** Re-read sessions & profile from storage (e.g. after a sync pull). */
+  reload: () => Promise<void>;
 }
 
 const StoreContext = createContext<StoreValue | null>(null);
@@ -59,23 +62,23 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     null,
   );
 
-  // Initial load from persistence.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const [loadedSessions, loadedProfile] = await Promise.all([
-        loadSessions(),
-        loadProfile(),
-      ]);
-      if (cancelled) return;
-      setSessions(loadedSessions);
-      setProfile(loadedProfile);
-      setLoading(false);
-    })();
-    return () => {
-      cancelled = true;
-    };
+  // Re-read persisted state. Used on mount and after a sync pull.
+  const reload = useCallback(async () => {
+    const [loadedSessions, loadedProfile] = await Promise.all([
+      loadSessions(),
+      loadProfile(),
+    ]);
+    setSessions(loadedSessions);
+    setProfile(loadedProfile);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    void reload();
+  }, [reload]);
+
+  // Re-read after a sync pull writes new data to storage.
+  useEffect(() => onSyncApplied(() => void reload()), [reload]);
 
   // Helper to mutate the active session immutably.
   const mutateActive = useCallback(
@@ -225,6 +228,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       updateSet,
       removeSet,
       updateProfile,
+      reload,
     }),
     [
       loading,
@@ -240,6 +244,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       updateSet,
       removeSet,
       updateProfile,
+      reload,
     ],
   );
 

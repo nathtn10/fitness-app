@@ -19,6 +19,7 @@ import { loadActivities, saveActivities } from '../data/cardioRepository';
 import { computeMetrics } from '../domain/cardio/metrics';
 import { detectNewCardioPRs, type NewCardioPR } from '../domain/cardio/records';
 import type { Activity, ActivityType, TrackPoint } from '../domain/cardio/types';
+import { onSyncApplied } from '../lib/events';
 import { createId } from '../lib/id';
 import {
   requestForegroundPermission,
@@ -44,6 +45,8 @@ interface CardioStoreValue {
   resume: () => void;
   discard: () => void;
   finish: (weightKg?: number) => NewCardioPR[];
+  /** Re-read activities from storage (e.g. after a sync pull). */
+  reload: () => Promise<void>;
 }
 
 const CardioContext = createContext<CardioStoreValue | null>(null);
@@ -55,6 +58,15 @@ export function CardioProvider({ children }: { children: React.ReactNode }) {
 
   const recordingRef = useRef<Recording | null>(null);
   const subRef = useRef<LocationSubscription | null>(null);
+
+  const reload = useCallback(async () => {
+    const loaded = await loadActivities();
+    setActivities(loaded);
+    setLoading(false);
+  }, []);
+
+  // Re-read after a sync pull writes new data to storage.
+  useEffect(() => onSyncApplied(() => void reload()), [reload]);
 
   useEffect(() => {
     let cancelled = false;
@@ -165,8 +177,9 @@ export function CardioProvider({ children }: { children: React.ReactNode }) {
       resume,
       discard,
       finish,
+      reload,
     }),
-    [loading, activities, recording, startActivity, pause, resume, discard, finish],
+    [loading, activities, recording, startActivity, pause, resume, discard, finish, reload],
   );
 
   return (
