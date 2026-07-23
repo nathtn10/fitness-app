@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "Fitness App",
+    "slug": "fitness-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "fitnessapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fitnessapp.mobile",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We use your location to track outdoor activities and detect when you're at the gym.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We use your location to track outdoor activities and detect when you're at the gym.",
+        "NSMotionUsageDescription": "We use motion data to estimate steps and activity.",
+        "NSHealthShareUsageDescription": "We read step and workout data to integrate with your daily fitness goals.",
+        "NSHealthUpdateUsageDescription": "We write completed workouts to Apple Health.",
+        "NSCameraUsageDescription": "We use the camera so you can take progress photos.",
+        "NSPhotoLibraryUsageDescription": "We access your photo library so you can add progress photos."
+      }
+    },
+    "android": {
+      "package": "com.fitnessapp.mobile",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACTIVITY_RECOGNITION"
+      ]
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
